@@ -4,6 +4,7 @@ db = sqlite3.connect('projet.db')
 cursor = db.cursor()
 running = True
 tables = sorted(['Batteries','Employees','Jobs','Clients','Panels'])
+
 def show(params):
     table = params.lower().capitalize()
     if table in tables:
@@ -11,6 +12,21 @@ def show(params):
         print(cursor.fetchall())
     else:
         print("Table non existant.\nSelect from following:\n",tables)
+
+def addBattery(capacity,price):
+    cursor.execute("INSERT INTO Batteries(batteryCapacity, batteryPrice) VALUES (?,?)",(capacity,price))
+    db.commit()
+
+def add(table):
+    table = table.lower().capitalize()
+    if table in tables:
+        if table == "Batteries":
+            capacity = float(input("Capacity: "))
+            price = float(input("Price: "))
+            addBattery(capacity,price)
+    else:
+        print("Table non existant.\nSelect from following:\n",tables)
+
 def do():
     global running
     inp = str(input()).upper().split(" ")
@@ -21,6 +37,11 @@ def do():
             show(inp[1])
         else:
             print("Error: Specify table to show.")
+    elif inp[0] == "ADD":
+        if len(inp) > 1:
+            add(inp[1])
+        else:
+            print("Error: Specify item to add.")
 while running:
     do()
 db.close()
